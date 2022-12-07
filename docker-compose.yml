@@ -1,0 +1,36 @@
+#  docker-compose для локальной разработки
+version: "2.4"
+networks:
+  kafka:
+    driver: bridge
+services:
+  #  CITUS
+  master:
+    container_name: "citus-prepared-transactions-recovery-bug-coordinator"
+    image: "citusdata/citus:11.1.4"
+    ports: [ "${COORDINATOR_EXTERNAL_PORT:-5432}:5432" ]
+    labels: [ "com.citusdata.role=Master" ]
+    environment: &AUTH
+      POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      PGUSER: "${POSTGRES_USER:-postgres}"
+      PGPASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_HOST_AUTH_METHOD: "${POSTGRES_HOST_AUTH_METHOD:-trust}"
+  worker:
+    container_name: "citus-prepared-transactions-recovery-bug-worker"
+    image: "citusdata/citus:11.1.4"
+    labels: [ "com.citusdata.role=Worker" ]
+    depends_on: [ manager ]
+    environment: *AUTH
+    command: "/wait-for-manager.sh"
+    volumes:
+      - healthcheck-volume:/healthcheck
+  manager:
+    container_name: "citus-prepared-transactions-recovery-bug-manager"
+    image: "citusdata/membership-manager:0.3.0"
+    volumes:
+      - "${DOCKER_SOCK:-/var/run/docker.sock}:/var/run/docker.sock"
+      - healthcheck-volume:/healthcheck
+    depends_on: [ master ]
+volumes:
+  healthcheck-volume:
