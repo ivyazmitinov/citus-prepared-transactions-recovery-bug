@@ -1,0 +1,20 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+# Zeppelin ignored files
+/ZeppelinRemoteNotebooks/
+# idea workspace stores local user ui settings - ignore it
+.idea
+.idea/workspace.xml
+.idea/modules.xml
+# idea feature to create shelves
+.idea/shelf
+# idea ui designer
+.idea/uiDesigner.xml
+# imls are commited one time
+*.iml
